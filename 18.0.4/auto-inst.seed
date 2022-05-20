@@ -1,0 +1,102 @@
+## Ubuntu 18.04 default  installation with RAID1 installation
+
+### Automatic Installation
+d-i auto-install/enable boolean true
+d-i debconf/priority select critical
+
+### Localization
+d-i debian-installer/locale string fr_FR.UTF-8
+d-i localechooser/supported-locales multiselect fr_FR.UTF-8
+# Keyboard
+d-i console-setup/ask_detect boolean false
+d-i keyboard-configuration/xkb-keymap select fr
+
+#--------------------------------------------------------------------------------
+# NETWORK
+#--------------------------------------------------------------------------------
+# netcfg will choose an interface that has link if possible. This makes it
+# skip displaying a list if there is more than one interface.
+# netcfg/choose_interface=eth0 is set as the boot parameter.
+#d-i netcfg/choose_interface select auto
+
+# If you prefer to configure the network manually, uncomment this line and
+# the static network configuration below.
+d-i netcfg/disable_autoconfig boolean true
+
+
+# Static network configuration. 
+# IPv4 
+d-i netcfg/get_ipaddress string 192.168.2.119
+d-i netcfg/get_netmask string 255.255.255.0
+d-i netcfg/get_gateway string 192.168.2.1
+d-i netcfg/get_nameservers string 192.168.2.5
+d-i netcfg/confirm_static boolean true
+
+
+# Adjust Hostname 
+d-i netcfg/hostname string ubuntu-server-18.4-adly-default-installation
+
+
+### Account setup
+d-i passwd/user-fullname string adly User
+d-i passwd/username string adly
+d-i passwd/user-password password adly
+d-i passwd/user-password-again password adly
+# Set to true if you want to encrypt the first user's home directory.
+d-i user-setup/encrypt-home boolean false
+
+### Clock and time zone setup
+d-i	clock-setup/utc-auto	boolean true
+# Controls whether to use NTP to set the clock during the install
+d-i clock-setup/ntp boolean true
+
+### Partitioning
+d-i partman-auto/method string raid
+d-i partman-auto/disk string /dev/sda /dev/sdb
+
+d-i partman-auto/expert_recipe string                                    \
+      multiraid ::                                                       \
+              1000 5000 -1 raid                                          \
+                      $primary{ } method{ raid }  $bootable{ } format{ } \
+          .
+
+d-i partman-auto-raid/recipe string \
+    1 2 0 ext4 /                    \
+          /dev/sda1#/dev/sdb1       \
+.
+
+d-i partman-md/confirm boolean true
+d-i partman-md/device_remove_md boolean true
+d-i partman-md/confirm_nooverwrite  boolean true
+d-i partman-partitioning/confirm_write_new_label boolean true
+d-i partman/choose_partition select finish
+d-i partman/confirm boolean true
+d-i partman/confirm_nooverwrite boolean true
+
+###swap You can set here swap for the server
+#It's not recommended for some server like mesos slave (docker host server)
+#d-i partman-swapfile/percentage string 10
+
+### Package selection
+
+#Add package (virtualbox VM)
+#d-i pkgsel/include string openssh-server build-essential dkms
+
+#Add package (Bare Metal server)
+d-i pkgsel/include string openssh-server 
+
+
+# Policy for applying updates. May be "none" (no automatic updates),
+# "unattended-upgrades" (install security updates automatically), or
+# "landscape" (manage system with Landscape).
+d-i pkgsel/update-policy select none
+
+# Verbose output and no boot splash screen.
+d-i	debian-installer/quiet	boolean false
+d-i	debian-installer/splash	boolean false
+
+# Avoid that last message about the install being complete.
+# This will just finish and reboot
+d-i finish-install/reboot_in_progress note
+#d-i debian-installer/exit/poweroff boolean true
+
