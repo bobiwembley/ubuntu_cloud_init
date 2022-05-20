@@ -1,0 +1,74 @@
+#cloud-config for ubuntu  20.04
+autoinstall:
+  version: 1
+  locale: fr_FR
+  keyboard:
+    layout: fr
+    variant: fr
+  identity:
+    hostname: ubuntu-server-20.4-default-installation
+    username: root
+    password: "$6$3434F424vwb$tfnQ6ECVfJQqPehach21KnkI/QKtcSPsFL./dMpunFItiQHKs1zMtHZm4BB/iSoEmawBSLCP7OZN.zdb8SS720"
+  #network:
+  #  network:
+  #   version: 2
+  #   ethernets:
+  #     enp0s3:
+  #       addresses: [192.168.2.100/24]
+  #       gateway4: 192.168.2.1
+  #       nameservers:
+  #           addresses: [8.8.8.8]
+  network:
+    version: 2
+    renderer: networkd
+    ethernets:
+        enp65s0f0:
+            addresses: []
+            dhcp4: false
+            dhcp6: false
+        enp65s0f1:
+            addresses: []
+            dhcp4: false
+            dhcp6: false
+        eno3:
+            addresses: []
+            dhcp4: false
+            dhcp6: false
+            optional: true
+        eno4:
+            addresses: []
+            dhcp4: false
+            dhcp6: false
+            optional: true
+    bonds:
+        bond0:
+            addresses: []
+            interfaces:
+            - enp65s0f0
+            - enp65s0f1
+            parameters:
+                mode: active-backup
+                mii-monitor-interval: 100
+    vlans:
+        bond0.2000:
+            addresses: [ " " ]
+            gateway4: 172.20.8.3
+            id: 2000
+            nameservers:
+                search: [ domain.tld ]
+                addresses:
+                    - " "
+                    - " "
+            link: bond0
+  
+  ssh:
+    install-server: yes
+    authorized-keys:
+      - "ssh-rsa "
+    "
+    allow-pw: yes
+  interactive-sections:
+    - storage
+
+
+final_message: "the system is UP  after $UPTIME seconds"
