@@ -34,7 +34,7 @@ d-i netcfg/confirm_static boolean true
 
 
 # Adjust Hostname 
-d-i netcfg/hostname string ubuntu-server-18.4-adly-default-installation
+d-i netcfg/hostname string ubuntu-server-18.4-default-installation
 
 
 ### Account setup
