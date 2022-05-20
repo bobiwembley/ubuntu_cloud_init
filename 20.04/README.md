@@ -1,6 +1,6 @@
 ## ISO default server  installation 20.04
 
-if you have to install server (adyoulike server) with **idrac**, you can use iso image 20.04 build with cloud-init:
+if you have to install server with **idrac**, you can use iso image 20.04 build with cloud-init:
 
 **Note**: Since 20.04 Canonical use **cloud-init**. On this same repo, you have the old-way, 18.04 personnal iso with debian preseed package.
 
